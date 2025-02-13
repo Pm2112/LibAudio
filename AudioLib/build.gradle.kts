@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("maven-publish")
 }
 
 android {
@@ -59,4 +60,14 @@ dependencies {
 
     // Ffmpeg
     implementation("com.arthenica:ffmpeg-kit-full:6.0")
+}
+
+publishing{
+    publications{
+        register<MavenPublication>("release"){
+            afterEvaluate{
+                from(components["release"])
+            }
+        }
+    }
 }
