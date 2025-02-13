@@ -3,25 +3,40 @@ package com.pdm.audiolib
 import android.media.AudioFormat
 import android.media.AudioRecord
 import android.media.MediaRecorder
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.activity.ComponentActivity
 import java.io.File
+import java.util.Locale
 
-class AudioRecorder(private val activity: ComponentActivity) {
+class AudioRecorder(
+    private val activity: ComponentActivity,
+    private val onTimeUpdate: (String) -> Unit = {}
+) {
     private var audioRecord: AudioRecord? = null
     private var isRecording = false
     private val audioData = mutableListOf<Byte>()
+    private var recordingStartTime: Long = 0L
+    private val handler = Handler(Looper.getMainLooper())
 
     private val permissionHandler = PermissionHandler(activity)
-    private val audioSaver = AudioSaver()
+    private val audioSaver = AudioSaver(activity)
+
+    val recorderResult: File
+        get() = getTemporaryMp3File()
 
     companion object {
         private const val TAG = "AudioRecorder"
         private const val SAMPLE_RATE = 44100
+        private const val BUFFER_SIZE = 1024
+        private const val TEMP_FILE_NAME = "temp_recording"
+        private const val MILLI_SECOND = 1000L
+        private const val MINUTE_UNIT = 60
     }
 
     /**
-     * Bắt đầu ghi âm (xin quyền nếu chưa cấp)
+     * Bắt đầu ghi âm
      */
     fun startRecording() {
         if (isRecording) {
@@ -40,9 +55,10 @@ class AudioRecorder(private val activity: ComponentActivity) {
 
             audioRecord?.startRecording()
             isRecording = true
+            recordingStartTime = System.currentTimeMillis()
 
             Thread {
-                val buffer = ByteArray(1024)
+                val buffer = ByteArray(BUFFER_SIZE)
                 while (isRecording) {
                     val read = audioRecord?.read(buffer, 0, buffer.size) ?: 0
                     if (read > 0) {
@@ -50,6 +66,7 @@ class AudioRecorder(private val activity: ComponentActivity) {
                             audioData.addAll(buffer.take(read))
                         }
                     }
+                    updateRecordingTime()
                 }
             }.start()
 
@@ -58,10 +75,10 @@ class AudioRecorder(private val activity: ComponentActivity) {
     }
 
     /**
-     * Dừng ghi âm
+     * Dừng ghi âm và lưu file MP3 tạm thời
      */
-    fun stopRecording() {
-        if (!isRecording) return
+    fun stopRecording(): File? {
+        if (!isRecording) return null
 
         isRecording = false
         audioRecord?.apply {
@@ -69,22 +86,53 @@ class AudioRecorder(private val activity: ComponentActivity) {
             release()
         }
         audioRecord = null
-        Log.d(TAG, "Đã dừng ghi âm.")
+
+        handler.removeCallbacksAndMessages(null) // Dừng cập nhật UI
+        updateRecordingTime(final = true)
+
+        return audioSaver.saveTemporaryAudio(audioData)
     }
 
     /**
-     * Lưu file ghi âm với nhiều định dạng (PCM, WAV, MP3)
+     * Xác nhận lưu file chính thức, xóa file tạm
      */
-    fun saveRecording(file: File, format: AudioFormatType) {
-        audioSaver.saveAudio(file, format, audioData)
+    fun finalizeRecording(finalFileName: String): File {
+        return audioSaver.finalizeRecording(finalFileName)
     }
 
     /**
-     * Hủy dữ liệu ghi âm tạm thời (không lưu)
+     * Hủy file ghi âm tạm thời
      */
     fun discardRecording() {
-        synchronized(audioData) { audioData.clear() }
-        Log.d(TAG, "Đã hủy dữ liệu ghi âm.")
+        audioSaver.deleteTemporaryAudio()
+    }
+
+    /**
+     * Lấy file MP3 tạm thời
+     */
+    fun getTemporaryMp3File(): File {
+        return audioSaver.getTemporaryFile()
+    }
+
+    /**
+     * Cập nhật thời gian ghi âm lên UI
+     */
+    private fun updateRecordingTime(final: Boolean = false) {
+        if (!isRecording && !final) return
+
+        val elapsedTime = System.currentTimeMillis() - recordingStartTime
+        val seconds = (elapsedTime / MILLI_SECOND) % MINUTE_UNIT
+        val minutes = (elapsedTime / MILLI_SECOND) / MINUTE_UNIT
+
+        val formattedTime = String.format(Locale.US, "%02d:%02d", minutes, seconds)
+
+        handler.post {
+            onTimeUpdate(formattedTime)
+        }
+
+        if (!final) {
+            handler.postDelayed({ updateRecordingTime() }, MILLI_SECOND)
+        }
     }
 
     fun isRecording(): Boolean = isRecording
