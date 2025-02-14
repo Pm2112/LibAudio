@@ -60,6 +60,13 @@ class AudioSaver(private val context: Context) {
         return getInternalFile(TEMP_FILE_NAME)
     }
 
+    /**
+     * Lấy đường dẫn file MP3 tạm thời
+     */
+    fun getTemporaryFilePath(): String {
+        return getTemporaryFile().absolutePath
+    }
+
     private fun saveAsPCM(file: File, audioData: List<Byte>) {
         try {
             FileOutputStream(file).use { it.write(audioData.toByteArray()) }

@@ -23,14 +23,10 @@ class AudioRecorder(
     private val permissionHandler = PermissionHandler(activity)
     private val audioSaver = AudioSaver(activity)
 
-    val recorderResult: File
-        get() = getTemporaryMp3File()
-
     companion object {
         private const val TAG = "AudioRecorder"
         private const val SAMPLE_RATE = 44100
         private const val BUFFER_SIZE = 1024
-        private const val TEMP_FILE_NAME = "temp_recording"
         private const val MILLI_SECOND = 1000L
         private const val MINUTE_UNIT = 60
     }
@@ -112,6 +108,13 @@ class AudioRecorder(
      */
     fun getTemporaryMp3File(): File {
         return audioSaver.getTemporaryFile()
+    }
+
+    /**
+     * Lấy đường dẫn file MP3 tạm thời
+     */
+    fun getTemporaryMp3FilePath(): String {
+        return audioSaver.getTemporaryFilePath()
     }
 
     /**
