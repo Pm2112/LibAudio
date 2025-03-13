@@ -1,10 +1,10 @@
 {
   "keyPem": {
-    "keyPem": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqh...\n-----END PRIVATE KEY-----",
+    "keyPem": "keyPem",
     "teamId": "TEAM123456",
     "keyId": "KEY123456"
   },
-  "ggCloudApiKey": "AIzaSyD***********fake-api-key**********"
+  "ggCloudApiKey": "ggCloudApiKey",
   "spotifyToken": {
     "clientId": "BQD-fake_spotify_token_123456789",
     "clientSecret": "Bearer"
