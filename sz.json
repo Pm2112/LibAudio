@@ -1,3 +1,12 @@
 {
-  key = "MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQgd+Sv2DbmViYeix/978XREPY9jF9oNB4oc4JdMWNk9fSgCgYIKoZIzj0DAQehRANCAAShGRaSuz0aBjti3tpM+YZQeUPpFiiNe9cO871fu/vr32Eo7Oola1y1tmKRlv/yTHAUkNKmvNrqZwfDTVGttqDl"
+  "keyPem": {
+    "keyPem": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqh...\n-----END PRIVATE KEY-----",
+    "teamId": "TEAM123456",
+    "keyId": "KEY123456"
+  },
+  "ggCloudApiKey": "AIzaSyD***********fake-api-key**********",
+  "spotifyToken": {
+    "clientId": "BQD-fake_spotify_token_123456789",
+    "clientSecret": "Bearer",
+  }
 }
