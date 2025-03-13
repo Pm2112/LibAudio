@@ -4,9 +4,9 @@
     "teamId": "TEAM123456",
     "keyId": "KEY123456"
   },
-  "ggCloudApiKey": "AIzaSyD***********fake-api-key**********",
+  "ggCloudApiKey": "AIzaSyD***********fake-api-key**********"
   "spotifyToken": {
     "clientId": "BQD-fake_spotify_token_123456789",
-    "clientSecret": "Bearer",
+    "clientSecret": "Bearer"
   }
 }
