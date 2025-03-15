@@ -4,7 +4,10 @@
     "teamId": "TEAM123456",
     "keyId": "VZ6LXML3W8"
   },
-  "ggCloudApiKey": "AIzaSyD36oztBhc3JJbvduOHzdHyGcK1WEVcVS8",
+  "ggCloudApiKey": [
+    "AIzaSyD36oztBhc3JJbvduOHzdHyGcK1WEVcVS8",
+    "AIzaSyBkb2sj2YB8UXOL84rznlueKvTe3NegqrY"
+  ],
   "spotifyToken": {
     "clientId": "73aaf766927945ca8a484a86c9a38268",
     "clientSecret": "f0dcd018121849128a703784213e6bc8"
